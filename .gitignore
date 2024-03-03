@@ -1,0 +1,70 @@
+#OS junk files
+[Tt]humbs.db
+*.DS_Store
+
+#Visual Studio files
+*.pidb
+*.userprefs
+*.[Oo]bj
+*.exe
+*.pdb
+*.user
+*.aps
+*.pch
+*.vspscc
+*.vssscc
+*_i.c
+*_p.c
+*.ncb
+*.suo
+*.tlb
+*.tlh
+*.bak
+*.[Cc]ache
+*.ilk
+*.log
+*.lib
+*.sbr
+*.sdf
+ipch/
+obj/
+[Bb]in
+[Rr]elease*/
+Ankh.NoLoad
+*.cachefile
+*.dll
+.vs
+
+#Tooling
+_ReSharper*/
+*.resharper
+[Tt]est[Rr]esult*
+
+#Project files
+[Bb]uild/
+
+# Office Temp Files
+~$*
+
+#Typescript/Javascript
+*.ts
+*.tsbuildinfo
+# *.js
+# *.js.map
+# *.js.min
+
+#Node
+node_modules
+
+#Security
+.env
+*.csr
+*.key
+*.pem
+*.crt
+
+#VSCode
+.vscode
+
+#Rider
+.idea
