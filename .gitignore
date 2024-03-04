@@ -68,3 +68,7 @@ node_modules
 
 #Rider
 .idea
+
+# Dist files
+*.app
+*.zip
