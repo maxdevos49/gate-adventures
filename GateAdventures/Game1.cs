@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Reflection;
 
 namespace GateAdventures;
 
@@ -14,6 +14,8 @@ public class Game1 : Game
 	private Texture2D _ballTexture;
 	private Texture2D _brickTexture;
 	private Texture2D _paddleTexture;
+	private Texture2D _heartTexture;
+	private Texture2D _gameOverTexture;
 
 	private BrickBreaker _brickBreaker;
 
@@ -26,9 +28,8 @@ public class Game1 : Game
 		Content.RootDirectory = "Content";
 
 		IsMouseVisible = true;
-		Window.AllowUserResizing = true;
 		IsFixedTimeStep = true;
-		TargetElapsedTime = TimeSpan.FromSeconds(1d / 60d); //30fps
+		TargetElapsedTime = TimeSpan.FromSeconds(1d / 60d);
 	}
 
 	protected override void Initialize()
@@ -45,6 +46,8 @@ public class Game1 : Game
 		_ballTexture = Content.Load<Texture2D>("ball");
 		_brickTexture = Content.Load<Texture2D>("brick");
 		_paddleTexture = Content.Load<Texture2D>("paddle");
+		_heartTexture = Content.Load<Texture2D>("heart");
+		_gameOverTexture = Content.Load<Texture2D>("gameover");
 	}
 
 	protected override void Update(GameTime gameTime)
@@ -59,19 +62,42 @@ public class Game1 : Game
 
 	protected override void Draw(GameTime gameTime)
 	{
-		GraphicsDevice.Clear(Color.CornflowerBlue);
+		Color background = new(Color.White, 0);
+
+		GraphicsDevice.Clear(background);
 
 		_spriteBatch.Begin();
 
 		foreach (var brick in _brickBreaker.Bricks)
 		{
-			_spriteBatch.Draw(_brickTexture, brick, Color.White);
+			if (brick.Hardness == 1)
+			{
+				_spriteBatch.Draw(_paddleTexture, brick.Bounds, Color.White);
+			}
+			else
+			{
+				_spriteBatch.Draw(_brickTexture, brick.Bounds, Color.White);
+			}
 		}
 
 		_spriteBatch.Draw(_ballTexture, _brickBreaker.Ball, Color.White);
 		_spriteBatch.Draw(_paddleTexture, _brickBreaker.Paddle, Color.White);
 
+		for (int i = 0; i < _brickBreaker.Lives; i++)
+		{
+			int x = i * 16;
+			_spriteBatch.Draw(_heartTexture, new Rectangle(x, 0, 16, 16), Color.White);
+		}
+
+		if (_brickBreaker.Lives <= 0)
+		{
+			int x = GraphicsDevice.Viewport.Bounds.Width / 2 - 64;
+			int y = GraphicsDevice.Viewport.Bounds.Height / 2 - 32;
+			_spriteBatch.Draw(_gameOverTexture, new Rectangle(x, y, 128, 64), Color.White);
+		}
+
 		_spriteBatch.End();
+
 
 		base.Draw(gameTime);
 	}
@@ -79,56 +105,59 @@ public class Game1 : Game
 
 class BrickBreaker
 {
+	private readonly Random _rand;
 	private readonly Rectangle _viewport;
-	private readonly List<Rectangle> _bricks;
+	private readonly List<Brick> _bricks;
 	private Rectangle _ball;
 	private Vector2 _ballVelocity;
 	private Rectangle _paddle;
 
-	public readonly int BrickWidth = 64;
-	public readonly int BrickHeight = 16;
-	public readonly int BrickPadding = 5;
+	public readonly int BrickPadding = 10;
+	public readonly int BallSpeed = 5;
 	public readonly int BallDiameter = 16;
 	public readonly int PaddleWidth = 128;
 	public readonly int PaddleHeight = 16;
 
-	public IList<Rectangle> Bricks { get => _bricks.AsReadOnly(); }
+	public IList<Brick> Bricks { get => _bricks.AsReadOnly(); }
 	public Rectangle Ball { get => _ball; }
 	public Rectangle Paddle { get => _paddle; }
+	public int Lives { get; private set; }
 
 	public BrickBreaker(Rectangle viewport)
 	{
+		_rand = new Random();
 		_viewport = viewport;
+		_bricks = new List<Brick>();
+		Lives = 5;
 
-		_bricks = new List<Rectangle>();
-		int paddingTop = 32;
-		int cols = viewport.Width / (BrickWidth + BrickPadding);
-		int paddingLeft = viewport.Width - (BrickWidth + BrickPadding) * cols - BrickPadding;
-		int rows = viewport.Height / (BrickHeight + BrickPadding + paddingTop);
+		int paddingTop = 64;
+
+		int cols = viewport.Width / (Brick.Width + BrickPadding);
+		int rows = viewport.Height / (Brick.Height + BrickPadding + paddingTop);
+		int paddingLeft = viewport.Width - (Brick.Width + BrickPadding) * cols - BrickPadding;
+
 		for (int i = 0; i < rows; i++)
 		{
 			for (int j = 0; j < cols; j++)
 			{
-				_bricks.Add(new Rectangle(
-					paddingLeft + ((BrickWidth + BrickPadding / 2) * j), //x position
-					paddingTop + ((BrickHeight + BrickPadding / 2) * i), // y position
-					BrickWidth,// width
-					BrickHeight// height
-				));
+				int x = paddingLeft + ((Brick.Width + BrickPadding / 2) * j);
+				int y = paddingTop + ((Brick.Height + BrickPadding / 2) * i);
+
+				_bricks.Add(new Brick(_rand.Next(1, 3), x, y));
 			}
 		}
 
-		_ball = new Rectangle(viewport.Width / 2 - BallDiameter / 2, viewport.Height - BallDiameter * 2 - 1, BallDiameter, BallDiameter);
-		int scale = 5;
-		Random rand = new();
-		Vector2 randomDirection = new(rand.NextSingle(), -1);
-		randomDirection.Normalize();
-		_ballVelocity = randomDirection * scale;
-		_paddle = new Rectangle(viewport.Width / 2 - PaddleWidth / 2, viewport.Height - PaddleHeight - 1, PaddleWidth, PaddleHeight);
+		ResetBall();
+		ResetPaddle();
 	}
 
 	public void Simulate()
 	{
+		if (Lives <= 0)
+		{
+			return;
+		}
+
 		if (Keyboard.GetState().IsKeyDown(Keys.Right))
 		{
 			_paddle.X += 3;
@@ -151,66 +180,120 @@ class BrickBreaker
 		_ball.X += (int)_ballVelocity.X;
 		_ball.Y += (int)_ballVelocity.Y;
 
-		if (_ball.X < 0)
+		// Left and right bounds.
+		if (_ball.X < 0 || _ball.X + BallDiameter > _viewport.Width)
 		{
-			_ball.X = 0;
-			_ballVelocity.X = -_ballVelocity.X;
-		}
-		else if (_ball.X + BallDiameter > _viewport.Width)
-		{
-			_ball.X = _viewport.Width - BallDiameter;
-			_ballVelocity.X = -_ballVelocity.X;
+			ReflectBall(RectangleExtension.Plane.Vertical);
+			if (_ball.X < 0)
+			{
+				_ball.X = 0;
+			}
+			else
+			{
+				_ball.X = _viewport.Width - BallDiameter;
+			}
 		}
 
+		// Top Bounds.
 		if (_ball.Y < 0)
 		{
+			ReflectBall(RectangleExtension.Plane.Horizontal);
 			_ball.Y = 0;
-			_ballVelocity.Y = -_ballVelocity.Y;
-		}
-		else if (_ball.Y + BallDiameter > _viewport.Height)
-		{
-			_ball = new Rectangle(_viewport.Width / 2 - BallDiameter / 2, _viewport.Height - BallDiameter * 2 - 1, BallDiameter, BallDiameter);
-			int scale = 5;
-			Random rand = new();
-			Vector2 randomDirection = new(rand.NextSingle(), -1);
-			randomDirection.Normalize();
-			_ballVelocity = randomDirection * scale;
-			_paddle = new Rectangle(_viewport.Width / 2 - PaddleWidth / 2, _viewport.Height - PaddleHeight - 1, PaddleWidth, PaddleHeight);
 		}
 
+		// Bottom bounds.
+		if (_ball.Y + BallDiameter > _viewport.Height)
+		{
+			ResetBall();
+			ResetPaddle();
+			Lives--;
+		}
+
+		// Brick collisions
 		for (int i = _bricks.Count - 1; i >= 0; i--)
 		{
-			Rectangle brick = _bricks[i];
+			Brick brick = _bricks[i];
 
-			if (_ball.Intersects(brick))
+			if (_ball.Intersects(brick.Bounds))
 			{
-				_bricks.Remove(brick);
-				if (brick.IntersectionPlane(_ball) == RectangleExtension.Plane.Vertical)
+				brick.Collide();
+
+				if (brick.IsBroken)
 				{
-					_ballVelocity.X = -_ballVelocity.X;
-				}
-				else
-				{
-					_ballVelocity.Y = -_ballVelocity.Y;
+					_bricks.Remove(_bricks[i]);
 				}
 
+				ReflectBall(brick.Bounds.IntersectionPlane(_ball));
 				break;
 			}
 		}
 
+		// Paddle collisions
 		if (_paddle.Intersects(_ball))
 		{
 			_ball.Y = _paddle.Y - BallDiameter;
-
-			int degrees = -(_ball.X + _paddle.Width / 2 - (_paddle.X + _paddle.Width / 2) - _paddle.Width / 2);
-			Matrix rot = Matrix.CreateRotationZ((float)(degrees * (Math.PI / 180)));
-			_ballVelocity = Vector2.Transform(Vector2.UnitY, rot);
-			_ballVelocity.X *= 5;
-			_ballVelocity.Y *= -5;
+			ReflectBallOnPaddle();
 		}
 
 	}
 
+	private void ResetBall()
+	{
+		_ball = new Rectangle(_viewport.Width / 2 - BallDiameter / 2, _viewport.Height - BallDiameter * 2 - 1, BallDiameter, BallDiameter);
+
+		int degrees = _rand.Next(-64, 64);
+		Matrix rot = Matrix.CreateRotationZ((float)(degrees * (Math.PI / 180)));
+		_ballVelocity = Vector2.Transform(Vector2.UnitY, rot);
+		_ballVelocity.X *= BallSpeed;
+		_ballVelocity.Y *= -BallSpeed;
+	}
+
+	private void ReflectBall(RectangleExtension.Plane plane)
+	{
+		if (plane == RectangleExtension.Plane.Vertical)
+		{
+			_ballVelocity.X = -_ballVelocity.X;
+		}
+		else if (plane == RectangleExtension.Plane.Horizontal)
+		{
+			_ballVelocity.Y = -_ballVelocity.Y;
+		}
+	}
+
+	private void ReflectBallOnPaddle()
+	{
+		int degrees = -(_ball.X + _paddle.Width / 2 - (_paddle.X + _paddle.Width / 2) - _paddle.Width / 2);
+		degrees = Math.Min(Math.Max(degrees, -64), 64);
+		Matrix rot = Matrix.CreateRotationZ((float)(degrees * (Math.PI / 180)));
+		Vector2 normalizedVelocity = Vector2.Transform(Vector2.UnitY, rot);
+		_ballVelocity = Vector2.Multiply(normalizedVelocity, BallSpeed);
+		_ballVelocity.Y = -_ballVelocity.Y;
+	}
+
+	private void ResetPaddle()
+	{
+		_paddle = new Rectangle(_viewport.Width / 2 - PaddleWidth / 2, _viewport.Height - PaddleHeight - 1, PaddleWidth, PaddleHeight);
+	}
+}
+
+public class Brick
+{
+	public static readonly int Width = 64;
+	public static readonly int Height = 16;
+	public Rectangle Bounds { get; private set; }
+	public int Hardness { get; private set; }
+	public bool IsBroken { get => Hardness <= 0; }
+
+	public Brick(int hardness, int x, int y)
+	{
+		Hardness = hardness;
+		Bounds = new Rectangle(x, y, Width, Height);
+	}
+
+	public void Collide()
+	{
+		Hardness--;
+	}
 }
 
 public static class RectangleExtension
@@ -231,12 +314,6 @@ public static class RectangleExtension
 		Horizontal
 	}
 
-	/// <summary>
-	/// Indicates the intersection side of rect1 by rect2.
-	/// </summary>
-	/// <param name="rect1"></param>
-	/// <param name="rect2"></param>
-	/// <returns></returns>
 	public static Side IntersectionSide(this Rectangle r1, Rectangle r2)
 	{
 		var dx = r1.X + r1.Width / 2 - (r2.X + r2.Width / 2);
@@ -250,7 +327,7 @@ public static class RectangleExtension
 		{
 			if (crossWidth > crossHeight)
 			{
-				collision = (crossWidth > (-crossHeight)) ? Side.Bottom : Side.Left;
+				collision = (crossWidth > -crossHeight) ? Side.Bottom : Side.Left;
 			}
 			else
 			{
