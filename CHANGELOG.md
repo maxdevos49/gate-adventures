@@ -26,3 +26,4 @@
 ### Other/Technical
 - Setup changelog template
 - Setup .editorconfig based on Microsoft's [recommendations](https://github.com/dotnet/docs/blob/main/.editorconfig). Be sure to install the [EditorConfig](https://editorconfig.org/) plugin for your relevant code editor
+- Setup Github actions to check the formatting and build for pull requests  
