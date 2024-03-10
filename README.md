@@ -19,7 +19,12 @@ dotnet build
 
 #### Run
 ```sh
-dotnet run
+dotnet run --project GateAdventures
+```
+
+#### Test
+```sh
+dotnet test
 ```
 
 #### Release
