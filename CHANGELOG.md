@@ -21,7 +21,7 @@
 
 -->
 
-### 0.0.0-2024-03-09
+### [0.0.0-2024-03-09](https://github.com/maxdevos49/gate-adventures/pull/2)
 
 ### Other/Technical
 - Setup changelog template
