@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "dependencies": {
+    "net6.0": {
+      "MonoGame.Content.Builder.Task": {
+        "type": "Direct",
+        "requested": "[3.8.1.303, )",
+        "resolved": "3.8.1.303",
+        "contentHash": "9Ilzzje62LhWElbPNEl7vh7XsRSbze+lvCJdZtTZUGu48FRgvYN6THURwIB9PN98EI33/Wnf6iuShNUtD7hL4Q=="
+      },
+      "MonoGame.Framework.DesktopGL": {
+        "type": "Direct",
+        "requested": "[3.8.1.303, )",
+        "resolved": "3.8.1.303",
+        "contentHash": "eGYhqn0n1olk8MNYeE9EuBmoNNECN1T18rPMaQpkzsEQ0H3nVyFPXC+uCo78v5pi5juQpJ3PSFnSkjzZJ1U58A=="
+      }
+    }
+  }
+}
