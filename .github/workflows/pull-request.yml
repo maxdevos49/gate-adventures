@@ -7,6 +7,21 @@ on:
       - "**"
 
 jobs:
+
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "6.0.x"
+          cache: true
+          cache-dependency-path: GateAdventures/packages.lock.json
+      - name: Install Nuget packages
+        run: dotnet restore --locked-mode
+      - name: Test formatting
+        run: dotnet format --verify-no-changes
+
   build:
     runs-on: ubuntu-latest
     steps:
@@ -15,7 +30,8 @@ jobs:
         with:
           dotnet-version: "6.0.x"
           cache: true
+          cache-dependency-path: GateAdventures/packages.lock.json
       - name: Install Nuget packages
         run: dotnet restore --locked-mode
-      - name: Build Project
+      - name: Build
         run: dotnet build
