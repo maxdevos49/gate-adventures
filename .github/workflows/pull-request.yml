@@ -19,7 +19,7 @@ jobs:
           cache-dependency-path: GateAdventures/packages.lock.json
       - name: Install Nuget packages
         run: dotnet restore --locked-mode
-      - name: Test formatting
+      - name: Format
         run: dotnet format --verify-no-changes
 
   build:
