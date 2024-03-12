@@ -6,8 +6,11 @@ namespace GateAdventures;
 
 public class Game1 : Game
 {
+	private Texture2D colorSprite;
 	private GraphicsDeviceManager _graphics;
 	private SpriteBatch _spriteBatch;
+	private Effect _effect;
+	//sampler s0;
 
 	public Game1()
 	{
@@ -28,6 +31,9 @@ public class Game1 : Game
 		_spriteBatch = new SpriteBatch(GraphicsDevice);
 
 		// TODO: use this.Content to load your game content here
+		colorSprite = Content.Load<Texture2D>("ColorfulTestSprite");
+		_effect = Content.Load<Effect>("effect1"); //primitive grayscale
+		//_effect = Content.Load<Effect>("effect2"); //negative
 	}
 
 	protected override void Update(GameTime gameTime)
@@ -44,6 +50,10 @@ public class Game1 : Game
 	{
 		GraphicsDevice.Clear(Color.CornflowerBlue);
 
+		_spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
+		_effect.CurrentTechnique.Passes[0].Apply(); //uncomment this and one of the effects above
+		_spriteBatch.Draw(colorSprite, new Vector2(20, 20), Color.White);
+		_spriteBatch.End();
 		// TODO: Add your drawing code here
 
 		base.Draw(gameTime);
