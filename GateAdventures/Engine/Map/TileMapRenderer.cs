@@ -20,25 +20,31 @@ public class TileMapRenderer
 
 	public void Draw(SpriteBatch _spriteBatch)
 	{
-		foreach (var layer in _tileMap.layers)
+		foreach (Layers layer in _tileMap.layers)
 		{
-			var layerData = layer.data;
-			var height = 0;
-			var width = 0;
+			List<int> layerData = layer.data;
+			int height = 0;
+			int width = 0;
 
-			foreach (var item in layerData)
+			foreach (int item in layerData)
 			{
-				var whereOnTheAtlasRectangle = _spriteData.atlasTextures[item];
-				var whereOnTheMapRectangle = new Rectangle(width * _tileMap.tilewidth, height * _tileMap.tileheight,
-					_tileMap.tilewidth,
-					_tileMap.tileheight);
-				_spriteBatch.Draw(_spriteData.atlas, whereOnTheMapRectangle, whereOnTheAtlasRectangle, Color.White);
+				if (item != 0)
+				{
+					int whichAtlas = _spriteData.atlasTextures[item].atlasKey;
+					Rectangle whereOnTheAtlasRectangle = _spriteData.atlasTextures[item].location;
+					Rectangle whereOnTheMapRectangle = new Rectangle(
+						width * _tileMap.tilewidth,
+						height * _tileMap.tileheight,
+						_tileMap.tilewidth,
+						_tileMap.tileheight);
+					_spriteBatch.Draw(_spriteData.textures[whichAtlas], whereOnTheMapRectangle, whereOnTheAtlasRectangle, Color.White);
+				}
 
-				width++;
+				width += 1;
 
 				if (width <= _tileMap.width - 1) continue;
 				width = 0;
-				height++;
+				height += 1;
 			}
 		}
 	}

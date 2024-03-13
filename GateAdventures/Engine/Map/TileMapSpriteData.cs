@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,33 +12,56 @@ namespace GateAdventures.Engine.Map;
 public class TileMapSpriteData
 {
 	private TileMap _tileMap;
-	public Texture2D atlas { get; }
-	public Dictionary<int, Rectangle> atlasTextures { get; } = new();
+	public List<Texture2D> textures { get; }
+	public Dictionary<int, AtlasTexture> atlasTextures { get; } = new();
 	public int spriteHeight { get; }
 	public int spriteWidth { get; }
 	public int rows { get; }
 	public int columns { get; }
 
-	public TileMapSpriteData(Texture2D atlasTexture, TileMap tileMap, int textureAtlasWidth, GraphicsDevice graphicsDevice)
+	public TileMapSpriteData(List<Texture2D> textures, List<int> firstGids, TileMap tileMap, GraphicsDevice graphicsDevice)
 	{
 		_tileMap = tileMap;
-		atlas = atlasTexture;
+		this.textures = textures;
 		spriteHeight = tileMap.tileheight;
 		spriteWidth = tileMap.tilewidth;
 
-		rows = textureAtlasWidth / spriteWidth;
-		columns = textureAtlasWidth / spriteHeight;
-		var tileID = tileMap.tilesets[0].firstgid;
+		int tileID = tileMap.tilesets[0].firstgid;
+		int atlasTextureKey = 0;
 
-		for (var y = 0; y < rows; y++)
+		foreach (Texture2D texture in textures)
 		{
-			for (var x = 0; x < columns; x++)
+			int rows = texture.Width / spriteWidth;
+			int columns = texture.Height / spriteHeight;
+
+			for (int y = 0; y < rows; y++)
 			{
-				var textureLocation = new Rectangle(x * spriteWidth, y * spriteHeight, spriteWidth, spriteHeight);
-				atlasTextures.Add(tileID, textureLocation);
-				tileID++;
+				for (int x = 0; x < columns; x++)
+				{
+					Rectangle textureLocation = new Rectangle(x * spriteWidth, y * spriteHeight, spriteWidth, spriteHeight);
+					AtlasTexture atlasTexture = new AtlasTexture(textureLocation, atlasTextureKey);
+					atlasTextures.Add(tileID, atlasTexture);
+					tileID += 1;
+
+					if (firstGids.Contains(tileID))
+					{
+						atlasTextureKey += 1;
+					}
+				}
 			}
 		}
 	}
 }
+
+public class AtlasTexture
+{
+	public Rectangle location { get; }
+	public int atlasKey { get; }
+	public AtlasTexture(Rectangle location, int atlasKey)
+	{
+		this.location = location;
+		this.atlasKey = atlasKey;
+	}
+}
+
 

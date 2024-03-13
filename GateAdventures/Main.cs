@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using GateAdventures.Engine.Map;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -13,7 +14,7 @@ namespace GateAdventures
 		private GraphicsDeviceManager _graphics;
 		private SpriteBatch _spriteBatch;
 
-		private TileMapRenderer _tileMapRenderer;
+		private List<TileMapRenderer> _maps;
 
 		public Main()
 		{
@@ -36,15 +37,8 @@ namespace GateAdventures
 		{
 			_spriteBatch = new SpriteBatch(GraphicsDevice);
 
-			// Load TileMap
-			// TODO: Move this to a TiledMapLoader Class
-			string filePath = Path.Combine(Content.RootDirectory, "assets/maps/exampleMap.json");
-			string jsonText = File.ReadAllText(filePath);
-			JObject jsonObject = JObject.Parse(jsonText);
-			TileMap tileMap = jsonObject.ToObject<TileMap>();
-			Texture2D atlas = this.Content.Load<Texture2D>("assets/maps/tilesets/TX-Tileset-Grass");
-			TileMapSpriteData mapSpriteData = new TileMapSpriteData(atlas, tileMap, atlas.Width, _graphics.GraphicsDevice);
-			_tileMapRenderer = new TileMapRenderer(mapSpriteData, tileMap);
+			// Load all configured TileMaps and their corresponding TileSets
+			_maps = TiledMapLoader.LoadAllMaps(Content, _graphics.GraphicsDevice);
 		}
 
 		protected override void Update(GameTime gameTime)
@@ -60,7 +54,11 @@ namespace GateAdventures
 			GraphicsDevice.Clear(Color.CornflowerBlue);
 			_spriteBatch.Begin();
 
-			_tileMapRenderer.Draw(_spriteBatch);
+			// TODO: associate a TileMap with a scene and draw it there, rather than looping through and drawing all tilemaps
+			foreach (TileMapRenderer mapRenderer in _maps)
+			{
+				mapRenderer.Draw(_spriteBatch);
+			}
 
 			_spriteBatch.End();
 			base.Draw(gameTime);
