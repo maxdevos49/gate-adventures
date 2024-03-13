@@ -20,6 +20,7 @@ public class TileMapSpriteData
 
 	public TileMapSpriteData(Texture2D atlasTexture, TileMap tileMap, int textureAtlasWidth, GraphicsDevice graphicsDevice)
 	{
+		_tileMap = tileMap;
 		atlas = atlasTexture;
 		spriteHeight = tileMap.tileheight;
 		spriteWidth = tileMap.tilewidth;
@@ -32,7 +33,8 @@ public class TileMapSpriteData
 		{
 			for (var x = 0; x < columns; x++)
 			{
-				var textureLocation = new Rectangle(x * spriteWidth, y * spriteHeight, spriteWidth, spriteHeight); atlasTextures.Add(tileID, textureLocation);
+				var textureLocation = new Rectangle(x * spriteWidth, y * spriteHeight, spriteWidth, spriteHeight);
+				atlasTextures.Add(tileID, textureLocation);
 				tileID++;
 			}
 		}
