@@ -31,7 +31,7 @@ public static class TiledMapLoader
 	public static TileMapRenderer LoadSingleMap(ContentManager content, GraphicsDevice graphics, string mapFilePath)
 	{
 		// Load JSON into TileMap object
-		string filePath = Path.Combine(content.RootDirectory, mapFilePath);
+		string filePath = Path.Combine(AppContext.BaseDirectory, content.RootDirectory, mapFilePath);
 		string jsonText = File.ReadAllText(filePath);
 		JObject jsonObject = JObject.Parse(jsonText);
 		TileMap tileMap = jsonObject.ToObject<TileMap>();

@@ -9,14 +9,14 @@ using Newtonsoft.Json.Linq;
 
 namespace GateAdventures
 {
-	public class Main : Game
+	public class GateAdventures : Game
 	{
 		private GraphicsDeviceManager _graphics;
 		private SpriteBatch _spriteBatch;
 
 		private List<TileMapRenderer> _maps;
 
-		public Main()
+		public GateAdventures()
 		{
 			_graphics = new GraphicsDeviceManager(this);
 			Content.RootDirectory = "Content";
@@ -62,15 +62,6 @@ namespace GateAdventures
 
 			_spriteBatch.End();
 			base.Draw(gameTime);
-		}
-	}
-
-	public static class Program
-	{
-		static void Main()
-		{
-			using (var game = new Main())
-				game.Run();
 		}
 	}
 }
