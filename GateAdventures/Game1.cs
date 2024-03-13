@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Runtime.CompilerServices;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -10,6 +11,7 @@ public class Game1 : Game
 	private GraphicsDeviceManager _graphics;
 	private SpriteBatch _spriteBatch;
 	private Effect _effect;
+	private Rectangle _rectangle;
 	//sampler s0;
 
 	public Game1()
@@ -29,11 +31,12 @@ public class Game1 : Game
 	protected override void LoadContent()
 	{
 		_spriteBatch = new SpriteBatch(GraphicsDevice);
-
 		// TODO: use this.Content to load your game content here
 		colorSprite = Content.Load<Texture2D>("ColorfulTestSprite");
-		_effect = Content.Load<Effect>("effect1"); //primitive grayscale
+		_rectangle = new Rectangle(0, 0, colorSprite.Width, colorSprite.Height);
+		//_effect = Content.Load<Effect>("effect1"); //primitive grayscale
 		//_effect = Content.Load<Effect>("effect2"); //negative
+		_effect = Content.Load<Effect>("effect3"); //pixel
 	}
 
 	protected override void Update(GameTime gameTime)
@@ -50,9 +53,11 @@ public class Game1 : Game
 	{
 		GraphicsDevice.Clear(Color.CornflowerBlue);
 
-		_spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
+		_spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp);
 		_effect.CurrentTechnique.Passes[0].Apply(); //uncomment this and one of the effects above
-		_spriteBatch.Draw(colorSprite, new Vector2(20, 20), Color.White);
+		//_spriteBatch.Draw(colorSprite, new Vector2(20, 20), Color.White);
+		_spriteBatch.Draw(colorSprite, new Vector2(20, 20), _rectangle, Color.White, 0, new Vector2(0,0), 4f, SpriteEffects.None, 1);
+		//void SpriteBatch.Draw(Texture2D texture, Vector2 position, Rectangle? sourceRectangle, Color color, float rotation, Vector2 origin, Vector2 scale, SpriteEffects effects, float layerDepth)
 		_spriteBatch.End();
 		// TODO: Add your drawing code here
 

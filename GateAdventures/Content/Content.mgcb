@@ -37,3 +37,9 @@
 /processorParam:DebugMode=Auto
 /build:effect2.fx
 
+#begin effect3.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:effect3.fx
+
