@@ -21,6 +21,13 @@
 
 -->
 
+### [0.0.0-2024-03-14](https://github.com/maxdevos49/gate-adventures/pull/4)
+
+#### Other/Technical
+- Added support for loading and rendering tile maps
+- Added example map using the tile editor named [Tiled](https://www.mapeditor.org/)
+- Documented how to use Tiled [here](./Tiled/README.md)
+
 ### [0.0.0-2024-03-10](https://github.com/maxdevos49/gate-adventures/pull/3)
 
 #### Other/Technical
