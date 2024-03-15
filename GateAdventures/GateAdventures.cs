@@ -33,11 +33,14 @@ public class GateAdventures : Game
 		Services.AddService(_sceneManager);
 		Services.AddService(Content);
 
+		Camera camera = new Camera(Services);
+		Services.AddService(camera);
+
 		_sceneManager.Start(new TileScene());
 		_sceneManager.StartOverlay(new HelloScene());
 
-		base.Initialize();
-	}
+			
+		}
 
 	protected override void Update(GameTime gameTime)
 	{
@@ -51,6 +54,10 @@ public class GateAdventures : Game
 			}
 
 			scene.Update(gameTime);
+			Camera camera = Services.GetService<Camera>();
+			camera.UpdateCamera(Services);
+
+			base.Update(gameTime);
 		}
 
 		base.Update(gameTime);
