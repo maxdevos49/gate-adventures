@@ -61,6 +61,7 @@ public class GateAdventures : Game
 
 	protected override void Draw(GameTime gameTime)
 	{
+		Services.GetService<GraphicsDevice>().Clear(Color.CornflowerBlue);
 		IScene[] scenes = _sceneManager.Scenes;
 		foreach (IScene scene in scenes)
 		{

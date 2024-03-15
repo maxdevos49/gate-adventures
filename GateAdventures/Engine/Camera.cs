@@ -17,7 +17,7 @@ public class Camera
 	public Matrix Transform { get; protected set; }
 	public Rectangle VisibleArea { get; protected set; }
 
-	private float _currentMouseWheelValue, _previousMouseWheelValue, _zoom, _previousZoom;
+	private float _currentMouseWheelValue, _previousMouseWheelValue;
 
 	public Camera(GameServiceContainer services)
 	{
@@ -132,60 +132,38 @@ public class Camera
 		}
 
 		// TODO: Store these somewhere not here
-		int tileWidth = 32;
+		/*int tileWidth = 32;
 		int tileHeight = 32;
 		int mapWidth = 30;
-		int mapHeight = 30;
-		Rectangle worldRectangle = new Rectangle(0, 0, mapWidth * tileWidth, mapHeight * tileHeight);
+		int mapHeight = 30;*/
 
-		// If the new location won't be off screen
 		Vector2 newPosition = Position + cameraMovement;
 		Matrix newTransform = CalculateTransformMatrix(newPosition, Bounds, Zoom);
 		Rectangle newVisibleArea = CalculateVisibleArea(Transform, Bounds);
-		if (worldRectangle.Contains(newVisibleArea))
+
+		// Comment these out if trying the other portion
+		UpdateMatrix(newTransform, newVisibleArea);
+		SetCameraPosition(newPosition);
+
+		/*
+		// Trying to figure out how to make it so the view area stays in the map
+		Debug.WriteLine(newVisibleArea.ToString(), newPosition.ToString());
+
+		if (newVisibleArea.Left <= 0
+			|| newVisibleArea.Top >= tileWidth * mapWidth
+			|| newVisibleArea.Right <= 0
+			|| newVisibleArea.Bottom + newVisibleArea.Height >= tileHeight * mapHeight)
+		{
+			Position = new Vector2(480, 480);
+			Matrix oldTransform = CalculateTransformMatrix(Position, Bounds, Zoom);
+			Rectangle rectangle = CalculateVisibleArea(oldTransform, Bounds);
+			UpdateMatrix(oldTransform, rectangle);
+		} else
 		{
 			UpdateMatrix(newTransform, newVisibleArea);
 			SetCameraPosition(newPosition);
-		} else
-		{
-			// Calculate the adjusted visible area
-			int x = Math.Max(worldRectangle.Left, newVisibleArea.Left);
-			int y = Math.Max(worldRectangle.Top, newVisibleArea.Top);
-			int right = Math.Min(worldRectangle.Right, newVisibleArea.Right);
-			int bottom = Math.Min(worldRectangle.Bottom, newVisibleArea.Bottom);
-
-			// Adjust left edge if out of bounds
-			if (x < worldRectangle.Left)
-				x = worldRectangle.Left;
-
-			// Adjust top edge if out of bounds
-			if (y < worldRectangle.Top)
-				y = worldRectangle.Top;
-
-			// Adjust right edge if out of bounds
-			if (right > worldRectangle.Right)
-				right = worldRectangle.Right;
-
-			// Adjust bottom edge if out of bounds
-			if (bottom > worldRectangle.Bottom)
-				bottom = worldRectangle.Bottom;
-
-			int width = right - x;
-			int height = bottom - y;
-
-			newVisibleArea = new Rectangle(x, y, width, height);
-
-			// Calculate the center of the adjusted visible area
-			int centerX = newVisibleArea.X + newVisibleArea.Width / 2;
-			int centerY = newVisibleArea.Y + newVisibleArea.Height / 2;
-
-			// Update the camera matrix and position with the adjusted values
-			newTransform = CalculateTransformMatrix(new Vector2(centerX, centerY), Bounds, Zoom);
-			
-			SetCameraPosition(new Vector2(centerX, centerY));
-			UpdateMatrix(newTransform, newVisibleArea);
 		}
-		
+		*/
 	}
 
 	public Vector2 getMouseScreenPosition()

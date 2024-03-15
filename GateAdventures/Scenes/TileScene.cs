@@ -24,7 +24,7 @@ public class TileScene : Scene
 
 	public override void Draw(GameTime gameTime)
 	{
-		_spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.DepthRead, RasterizerState.CullCounterClockwise, null, _camera.Transform);
+		_spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.DepthRead, RasterizerState.CullCounterClockwise, null, _camera.Transform);
 
 		foreach (TileMapRenderer mapRenderer in _maps)
 		{
