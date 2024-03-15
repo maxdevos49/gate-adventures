@@ -19,6 +19,8 @@ public class Camera
 	public Rectangle VisibleArea { get; protected set; }
 
 	private float _currentMouseWheelValue, _previousMouseWheelValue;
+	private Vector2 _oldPosition;
+	private Matrix _oldTransform;
 
 	public Camera(GameServiceContainer services)
 	{
@@ -65,6 +67,9 @@ public class Camera
 
 	public void UpdateCamera(GraphicsDeviceManager graphics)
 	{
+		_oldPosition = Position;
+		_oldTransform = Transform;
+
 		KeyboardState state = Keyboard.GetState();
 		MouseState mouseState = Mouse.GetState();
 
@@ -107,38 +112,34 @@ public class Camera
 		}
 
 		// TODO: Store these somewhere not here
-		/*int tileWidth = 32;
+		int tileWidth = 32;
 		int tileHeight = 32;
-		int mapWidth = 30;
-		int mapHeight = 30;*/
+		int mapWidth = 32;
+		int mapHeight = 32;
 
 		Vector2 newPosition = Position + cameraMovement;
 		Matrix newTransform = CalculateTransformMatrix(newPosition, Bounds, Zoom);
 		Rectangle newVisibleArea = CalculateVisibleArea(Transform, Bounds);
 
-		// Comment these out if trying the other portion
-		UpdateMatrix(newTransform, newVisibleArea);
-		SetCameraPosition(newPosition);
-
-		/*
 		// Trying to figure out how to make it so the view area stays in the map
 		Debug.WriteLine(newVisibleArea.ToString(), newPosition.ToString());
+		Debug.WriteLine(newVisibleArea.Bottom);
 
-		if (newVisibleArea.Left <= 0
-			|| newVisibleArea.Top >= tileWidth * mapWidth
-			|| newVisibleArea.Right <= 0
-			|| newVisibleArea.Bottom + newVisibleArea.Height >= tileHeight * mapHeight)
+		if (newVisibleArea.Left < 0
+			|| newVisibleArea.Top < 0
+			|| newVisibleArea.Right > tileWidth * mapWidth
+			|| newVisibleArea.Bottom > tileHeight * mapHeight)
 		{
-			Position = new Vector2(480, 480);
-			Matrix oldTransform = CalculateTransformMatrix(Position, Bounds, Zoom);
-			Rectangle rectangle = CalculateVisibleArea(oldTransform, Bounds);
-			UpdateMatrix(oldTransform, rectangle);
-		} else
-		{
-			UpdateMatrix(newTransform, newVisibleArea);
-			SetCameraPosition(newPosition);
+			Position = _oldPosition;
+			Transform = _oldTransform;
+			VisibleArea = CalculateVisibleArea(Transform, Bounds);
 		}
-		*/
+		else
+		{
+			Position = newPosition;
+			Transform = newTransform;
+			VisibleArea = newVisibleArea;
+		}
 	}
 
 	private Matrix CalculateTransformMatrix(Vector2 position, Rectangle bounds, float zoom)
@@ -152,12 +153,12 @@ public class Camera
 
 	private Rectangle CalculateVisibleArea(Matrix transform, Rectangle bounds)
 	{
-		Matrix inverseViewMatrix = Matrix.Invert(Transform);
+		Matrix inverseViewMatrix = Matrix.Invert(transform);
 
 		Vector2 tl = Vector2.Transform(Vector2.Zero, inverseViewMatrix);
-		Vector2 tr = Vector2.Transform(new Vector2(Bounds.X, 0), inverseViewMatrix);
-		Vector2 bl = Vector2.Transform(new Vector2(0, Bounds.Y), inverseViewMatrix);
-		Vector2 br = Vector2.Transform(new Vector2(Bounds.Width, Bounds.Height), inverseViewMatrix);
+		Vector2 tr = Vector2.Transform(new Vector2(bounds.X, 0), inverseViewMatrix);
+		Vector2 bl = Vector2.Transform(new Vector2(0, bounds.Y), inverseViewMatrix);
+		Vector2 br = Vector2.Transform(new Vector2(bounds.Width, bounds.Height), inverseViewMatrix);
 
 		Vector2 min = new Vector2(
 			MathHelper.Min(tl.X, MathHelper.Min(tr.X, MathHelper.Min(bl.X, br.X))),
