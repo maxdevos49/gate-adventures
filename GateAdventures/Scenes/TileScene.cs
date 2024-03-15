@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using GateAdventures.Engine.Map;
+using GateAdventures.Engine.Scenes;
 using Microsoft.Xna.Framework;
 
 namespace GateAdventures;
@@ -9,7 +10,7 @@ public class TileScene : Scene
 	private List<TileMapRenderer> _maps;
 	public override void LoadContent()
 	{
-		_maps = TiledMapLoader.LoadAllMaps(Content, GraphicsDevice);
+		_maps = TiledMapLoader.LoadAllMaps(_content, _graphicsDevice);
 	}
 	public override void HandleInput() { }
 
@@ -17,11 +18,11 @@ public class TileScene : Scene
 
 	public override void Draw(GameTime gameTime)
 	{
-		SpriteBatch.Begin();
+		_spriteBatch.Begin();
 		foreach (TileMapRenderer mapRenderer in _maps)
 		{
-			mapRenderer.Draw(SpriteBatch);
+			mapRenderer.Draw(_spriteBatch);
 		}
-		SpriteBatch.End();
+		_spriteBatch.End();
 	}
 }

@@ -19,13 +19,13 @@ public class HelloScene : Scene
 		base.Initialize(services);
 
 		_ballVelocity = Vector2.Zero;
-		_ballPosition = GraphicsDevice.Viewport.Bounds.Center.ToVector2();
+		_ballPosition = _graphicsDevice.Viewport.Bounds.Center.ToVector2();
 		_previousMouseState = Mouse.GetState();
 	}
 
 	public override void LoadContent()
 	{
-		_ballTexture = Content.Load<Texture2D>("RedBall");
+		_ballTexture = _content.Load<Texture2D>("RedBall");
 	}
 
 	public override void HandleInput()
@@ -52,8 +52,8 @@ public class HelloScene : Scene
 
 		if (_previousMouseState.LeftButton == ButtonState.Pressed && currentMouseState.LeftButton == ButtonState.Released)
 		{
-			SceneManager.Stop(this);
-			SceneManager.StartOverlay(new WorldScene());
+			_sceneManager.Stop(this);
+			_sceneManager.StartOverlay(new WorldScene());
 			return;
 		}
 
@@ -65,7 +65,7 @@ public class HelloScene : Scene
 		_ballPosition = Vector2.Add(_ballPosition, _ballVelocity);
 
 		// Horizontal bounds.
-		Rectangle bounds = GraphicsDevice.Viewport.Bounds;
+		Rectangle bounds = _graphicsDevice.Viewport.Bounds;
 		if (_ballPosition.X < 0)
 		{
 			_ballPosition.X = 0;
@@ -88,10 +88,10 @@ public class HelloScene : Scene
 
 	public override void Draw(GameTime gameTime)
 	{
-		SpriteBatch.Begin();
+		_spriteBatch.Begin();
 
-		SpriteBatch.Draw(_ballTexture, Vector2.Subtract(_ballPosition, new Vector2(16, 16)), new Rectangle(0, 0, 32, 32), Color.White);
+		_spriteBatch.Draw(_ballTexture, Vector2.Subtract(_ballPosition, new Vector2(16, 16)), new Rectangle(0, 0, 32, 32), Color.White);
 
-		SpriteBatch.End();
+		_spriteBatch.End();
 	}
 }

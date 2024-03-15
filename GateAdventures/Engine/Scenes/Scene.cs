@@ -10,28 +10,28 @@ namespace GateAdventures.Engine.Scenes;
 /// </summary>
 public abstract class Scene : IScene
 {
-	protected GraphicsDeviceManager GraphicsDeviceManager { get; private set; }
-	protected GraphicsDevice GraphicsDevice { get; private set; }
-	protected SpriteBatch SpriteBatch { get; private set; }
-	protected SceneManager SceneManager { get; private set; }
-	protected ContentManager Content { get; private set; }
+	protected GraphicsDeviceManager _graphicsDeviceManager { get; private set; }
+	protected GraphicsDevice _graphicsDevice { get; private set; }
+	protected SpriteBatch _spriteBatch { get; private set; }
+	protected SceneManager _sceneManager { get; private set; }
+	protected ContentManager _content { get; private set; }
 
 	public virtual void Initialize(GameServiceContainer services)
 	{
-		SceneManager = services.GetService<SceneManager>() ?? throw new NullReferenceException("\"SceneManager\" service is null");
-		SpriteBatch = services.GetService<SpriteBatch>() ?? throw new NullReferenceException("\"SpriteBatch\" service is null");
-		GraphicsDeviceManager = services.GetService<GraphicsDeviceManager>() ?? throw new NullReferenceException("\"GraphicsDeviceManager\" service is null");
-		GraphicsDevice = services.GetService<GraphicsDevice>() ?? throw new NullReferenceException("\"GraphicsDevice\" service is null");
+		_sceneManager = services.GetService<SceneManager>() ?? throw new NullReferenceException("\"SceneManager\" service is null");
+		_spriteBatch = services.GetService<SpriteBatch>() ?? throw new NullReferenceException("\"SpriteBatch\" service is null");
+		_graphicsDeviceManager = services.GetService<GraphicsDeviceManager>() ?? throw new NullReferenceException("\"GraphicsDeviceManager\" service is null");
+		_graphicsDevice = services.GetService<GraphicsDevice>() ?? throw new NullReferenceException("\"GraphicsDevice\" service is null");
 
 		ContentManager globalContentManager = services.GetService<ContentManager>() ?? throw new NullReferenceException("\nContentManager\n service is null");
-		Content = new ContentManager(services, globalContentManager.RootDirectory);
+		_content = new ContentManager(services, globalContentManager.RootDirectory);
 	}
 
 	public abstract void LoadContent();
 
 	public virtual void UnloadContent()
 	{
-		Content.Unload();
+		_content.Unload();
 	}
 
 	public abstract void HandleInput();
