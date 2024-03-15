@@ -1,4 +1,5 @@
-﻿using GateAdventures.Engine.Scenes;
+﻿using GateAdventures.Engine;
+using GateAdventures.Engine.Scenes;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -8,7 +9,6 @@ public class GateAdventures : Game
 {
 	private readonly GraphicsDeviceManager _graphics;
 	private readonly SceneManager _sceneManager;
-
 
 	public GateAdventures()
 	{
@@ -38,9 +38,7 @@ public class GateAdventures : Game
 
 		_sceneManager.Start(new TileScene());
 		_sceneManager.StartOverlay(new HelloScene());
-
-			
-		}
+	}
 
 	protected override void Update(GameTime gameTime)
 	{
@@ -54,8 +52,6 @@ public class GateAdventures : Game
 			}
 
 			scene.Update(gameTime);
-			Camera camera = Services.GetService<Camera>();
-			camera.UpdateCamera(Services);
 
 			base.Update(gameTime);
 		}

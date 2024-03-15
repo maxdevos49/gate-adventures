@@ -17,7 +17,7 @@ public class Camera
 	public Matrix Transform { get; protected set; }
 	public Rectangle VisibleArea { get; protected set; }
 
-	private float currentMouseWheelValue, previousMouseWheelValue, zoom, previousZoom;
+	private float _currentMouseWheelValue, _previousMouseWheelValue, _zoom, _previousZoom;
 
 	public Camera(GameServiceContainer services)
 	{
@@ -88,9 +88,8 @@ public class Camera
 		}
 	}
 
-	public void UpdateCamera(GameServiceContainer services)
+	public void UpdateCamera(GraphicsDeviceManager graphics)
 	{
-		GraphicsDeviceManager graphics = services.GetService<GraphicsDeviceManager>();
 		KeyboardState state = Keyboard.GetState();
 		MouseState mouseState = Mouse.GetState();
 
@@ -119,21 +118,18 @@ public class Camera
 		}
 
 		// Handle zoom
-		previousMouseWheelValue = currentMouseWheelValue;
-		currentMouseWheelValue = mouseState.ScrollWheelValue;
+		_previousMouseWheelValue = _currentMouseWheelValue;
+		_currentMouseWheelValue = mouseState.ScrollWheelValue;
 
-		if (currentMouseWheelValue > previousMouseWheelValue)
+		if (_currentMouseWheelValue > _previousMouseWheelValue)
 		{
 			AdjustZoom(.05f);
 		}
 
-		if (currentMouseWheelValue < previousMouseWheelValue)
+		if (_currentMouseWheelValue < _previousMouseWheelValue)
 		{
 			AdjustZoom(-.05f);
 		}
-
-		/*previousZoom = zoom;
-		zoom = Zoom;*/
 
 		// TODO: Store these somewhere not here
 		int tileWidth = 32;
