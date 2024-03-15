@@ -25,7 +25,7 @@ public class WorldScene : Scene
 
 	public override void LoadContent()
 	{
-		_ballTexture = Content.Load<Texture2D>("ball");
+		_ballTexture = Content.Load<Texture2D>("BlueBall");
 	}
 
 	public override void HandleInput()
@@ -52,7 +52,8 @@ public class WorldScene : Scene
 
 		if (_previousMouseState.LeftButton == ButtonState.Pressed && currentMouseState.LeftButton == ButtonState.Released)
 		{
-			SceneManager.Start(new HelloScene());
+			SceneManager.Stop(this);
+			SceneManager.StartOverlay(new HelloScene());
 			_previousMouseState = currentMouseState;
 
 			return;
@@ -89,7 +90,6 @@ public class WorldScene : Scene
 
 	public override void Draw(GameTime gameTime)
 	{
-		GraphicsDevice.Clear(Color.Black);
 		SpriteBatch.Begin();
 
 		SpriteBatch.Draw(_ballTexture, Vector2.Subtract(_ballPosition, new Vector2(16, 16)), new Rectangle(0, 0, 32, 32), Color.White);

@@ -8,7 +8,7 @@ public class GateAdventures : Game
 {
 	private readonly GraphicsDeviceManager _graphics;
 	private readonly SceneManager _sceneManager;
-	// private List<TileMapRenderer> _maps;
+
 
 	public GateAdventures()
 	{
@@ -33,15 +33,10 @@ public class GateAdventures : Game
 		Services.AddService(_sceneManager);
 		Services.AddService(Content);
 
-		_sceneManager.Start(new HelloScene());
+		_sceneManager.Start(new TileScene());
+		_sceneManager.StartOverlay(new HelloScene());
 
 		base.Initialize();
-	}
-
-	protected override void LoadContent()
-	{
-		// Load all configured TileMaps and their corresponding TileSets
-		// _maps = TiledMapLoader.LoadAllMaps(Content, _graphics.GraphicsDevice);
 	}
 
 	protected override void Update(GameTime gameTime)
@@ -71,16 +66,6 @@ public class GateAdventures : Game
 			scene.Draw(gameTime);
 		}
 
-		// // TODO: associate a TileMap with a scene and draw it there, rather than looping through and drawing all tilemaps
-		// foreach (TileMapRenderer mapRenderer in _maps)
-		// {
-		// 	mapRenderer.Draw(_spriteBatch);
-		// }
-
 		base.Draw(gameTime);
 	}
 }
-
-
-
-
