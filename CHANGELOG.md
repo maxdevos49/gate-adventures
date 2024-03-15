@@ -21,6 +21,13 @@
 
 -->
 
+### [0.0.0-2024-03-15](https://github.com/maxdevos49/gate-adventures/pull/5)
+
+#### Other/Technical
+- Added support for managing 1 or more scenes at a time
+- Added 3 example scenes demonstrating how a scene can be used or implemented
+- Added unit test for the SceneManager class
+
 ### [0.0.0-2024-03-14](https://github.com/maxdevos49/gate-adventures/pull/4)
 
 #### Other/Technical
