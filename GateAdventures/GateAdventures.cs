@@ -38,6 +38,8 @@ public class GateAdventures : Game
 
 		_sceneManager.Start(new TileScene());
 		_sceneManager.StartOverlay(new HelloScene());
+
+		base.Initialize();
 	}
 
 	protected override void Update(GameTime gameTime)
