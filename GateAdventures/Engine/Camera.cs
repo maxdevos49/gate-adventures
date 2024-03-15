@@ -18,7 +18,7 @@ public class Camera
 	public Matrix Transform { get; protected set; }
 	public Rectangle VisibleArea { get; protected set; }
 
-	private float _currentMouseWheelValue, _previousMouseWheelValue;
+	private float _currentMouseWheelValue, _previousMouseWheelValue, _oldZoom;
 	private Vector2 _oldPosition;
 	private Matrix _oldTransform;
 
@@ -69,6 +69,7 @@ public class Camera
 	{
 		_oldPosition = Position;
 		_oldTransform = Transform;
+		_oldZoom = Zoom;
 
 		KeyboardState state = Keyboard.GetState();
 		MouseState mouseState = Mouse.GetState();
@@ -114,28 +115,32 @@ public class Camera
 		// TODO: Store these somewhere not here
 		int tileWidth = 32;
 		int tileHeight = 32;
-		int mapWidth = 32;
-		int mapHeight = 32;
+		int mapWidth = 30;
+		int mapHeight = 30;
 
 		Vector2 newPosition = Position + cameraMovement;
 		Matrix newTransform = CalculateTransformMatrix(newPosition, Bounds, Zoom);
-		Rectangle newVisibleArea = CalculateVisibleArea(Transform, Bounds);
+		Rectangle newVisibleArea = CalculateVisibleArea(newTransform, Bounds);
 
 		// Trying to figure out how to make it so the view area stays in the map
-		Debug.WriteLine(newVisibleArea.ToString(), newPosition.ToString());
-		Debug.WriteLine(newVisibleArea.Bottom);
+		Debug.WriteLine("Visible Area: " + newVisibleArea.ToString(), "New Position: " + newPosition.ToString());
+		Debug.WriteLine("Old Position: " + Position.ToString());
 
+		// If out of bounds
 		if (newVisibleArea.Left < 0
 			|| newVisibleArea.Top < 0
 			|| newVisibleArea.Right > tileWidth * mapWidth
 			|| newVisibleArea.Bottom > tileHeight * mapHeight)
 		{
+			Debug.WriteLine("Out of bounds");
+			Zoom = _oldZoom;
 			Position = _oldPosition;
 			Transform = _oldTransform;
 			VisibleArea = CalculateVisibleArea(Transform, Bounds);
 		}
 		else
 		{
+			Debug.WriteLine("In bounds");
 			Position = newPosition;
 			Transform = newTransform;
 			VisibleArea = newVisibleArea;
@@ -155,6 +160,7 @@ public class Camera
 	{
 		Matrix inverseViewMatrix = Matrix.Invert(transform);
 
+		// Corners top-left, top-right, bottom-left, bottom-right
 		Vector2 tl = Vector2.Transform(Vector2.Zero, inverseViewMatrix);
 		Vector2 tr = Vector2.Transform(new Vector2(bounds.X, 0), inverseViewMatrix);
 		Vector2 bl = Vector2.Transform(new Vector2(0, bounds.Y), inverseViewMatrix);
