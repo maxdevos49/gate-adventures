@@ -1,6 +1,6 @@
+﻿using GateAdventures.Engine.Scenes;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using GateAdventures.Engine.Scenes;
 
 namespace GateAdventures;
 
