@@ -21,6 +21,16 @@
 
 -->
 
+### [0.0.0-2024-03-15](https://github.com/maxdevos49/gate-adventures/pull/5)
+
+#### Other/Technical
+- Added support for managing 1 or more scenes at a time. 
+  - Create a new scene using `IScene` or `Scene`. 
+  - Start or Stop scenes using `SceneManager.Start` or `SceneManager.Stop` respectively by passing a instance of a `IScene`. 
+  - Run scenes in parallel using `SceneManager.StartOverlay`.
+  - Added 3 example scenes demonstrating how a scene can be used or implemented. Example scenes are named TileScene, HelloScene, and WorldScene.
+- Added unit tests for the SceneManager class
+
 ### [0.0.0-2024-03-14](https://github.com/maxdevos49/gate-adventures/pull/4)
 
 #### Other/Technical
