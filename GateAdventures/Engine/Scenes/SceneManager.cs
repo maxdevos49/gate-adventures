@@ -71,7 +71,7 @@ public sealed class SceneManager
 }
 
 /// <summary>
-/// A game scene.
+/// A game scene interface.
 /// </summary>
 public interface IScene
 {

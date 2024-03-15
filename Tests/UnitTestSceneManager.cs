@@ -46,7 +46,7 @@ public class UnitTestSceneManager
 		Assert.Single(manager.Scenes);
 	}
 
-	[Fact(DisplayName = "Stopping a scene correctly calls unloadContent on the scene")]
+	[Fact(DisplayName = "Stopping a scene correctly calls UnloadContent on the scene")]
 	public void SceneManagerStopCallsCorrectMethodsOnScene()
 	{
 		GameServiceContainer services = new();
