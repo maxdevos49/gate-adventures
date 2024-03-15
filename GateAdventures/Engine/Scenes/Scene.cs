@@ -1,10 +1,9 @@
 ﻿using System;
-using GateAdventures.Engine.Scenes;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace GateAdventures;
+namespace GateAdventures.Engine.Scenes;
 
 /// <summary>
 /// A base for most scene implementations.

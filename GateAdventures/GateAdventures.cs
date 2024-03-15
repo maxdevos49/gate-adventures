@@ -42,12 +42,10 @@ public class GateAdventures : Game
 	protected override void Update(GameTime gameTime)
 	{
 		IScene[] scenes = _sceneManager.Scenes;
-		int sceneCount = scenes.Length - 1;
-
-		for (int i = 0; i <= sceneCount; i++)
+		for (int i = 0; i < scenes.Length; i++)
 		{
 			IScene scene = scenes[i];
-			if (i == sceneCount)
+			if (i == (scenes.Length - 1))
 			{
 				scene.HandleInput();
 			}
