@@ -28,12 +28,9 @@ public class GateAdventures : Game
 		Services.AddService(_sceneManager);
 		Services.AddService(Content);
 
-		base.Initialize();
-	}
-
-	protected override void LoadContent()
-	{
 		_sceneManager.Start(new HelloScene());
+
+		base.Initialize();
 	}
 
 	protected override void Update(GameTime gameTime)

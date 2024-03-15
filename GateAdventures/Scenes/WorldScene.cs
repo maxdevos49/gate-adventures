@@ -42,7 +42,7 @@ public class WorldScene : Scene
 		// Apply steering force
 		_ballVelocity += desiredDirection;
 
-		// Limit velocity to a maximum magnitude of 50
+		// Limit velocity to a maximum magnitude of 25
 		float velocityMagnitude = Math.Min(Vector2.Distance(Vector2.Zero, _ballVelocity), 25);
 		_ballVelocity.Normalize();
 		_ballVelocity = Vector2.Multiply(_ballVelocity, velocityMagnitude);
