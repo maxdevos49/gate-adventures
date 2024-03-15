@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace GateAdventures.Engine;
+
 public class Camera
 {
 	public float Zoom { get; set; }
@@ -30,32 +31,6 @@ public class Camera
 
 		Transform = CalculateTransformMatrix(Position, Bounds, Zoom);
 		VisibleArea = CalculateVisibleArea(Transform, Bounds);
-	}
-	private Matrix CalculateTransformMatrix(Vector2 position, Rectangle bounds, float zoom)
-	{
-		Matrix transform = Matrix.CreateTranslation(new Vector3(-position.X, -position.Y, 0)) *
-					Matrix.CreateScale(zoom) *
-					Matrix.CreateTranslation(new Vector3(bounds.Width * 0.5f, bounds.Height * 0.5f, 0));
-
-		return transform;
-	}
-	private Rectangle CalculateVisibleArea(Matrix transform, Rectangle bounds)
-	{
-		Matrix inverseViewMatrix = Matrix.Invert(Transform);
-
-		Vector2 tl = Vector2.Transform(Vector2.Zero, inverseViewMatrix);
-		Vector2 tr = Vector2.Transform(new Vector2(Bounds.X, 0), inverseViewMatrix);
-		Vector2 bl = Vector2.Transform(new Vector2(0, Bounds.Y), inverseViewMatrix);
-		Vector2 br = Vector2.Transform(new Vector2(Bounds.Width, Bounds.Height), inverseViewMatrix);
-
-		Vector2 min = new Vector2(
-			MathHelper.Min(tl.X, MathHelper.Min(tr.X, MathHelper.Min(bl.X, br.X))),
-			MathHelper.Min(tl.Y, MathHelper.Min(tr.Y, MathHelper.Min(bl.Y, br.Y))));
-		Vector2 max = new Vector2(
-			MathHelper.Max(tl.X, MathHelper.Max(tr.X, MathHelper.Max(bl.X, br.X))),
-			MathHelper.Max(tl.Y, MathHelper.Max(tr.Y, MathHelper.Max(bl.Y, br.Y))));
-
-		return (new Rectangle((int)min.X, (int)min.Y, (int)(max.X - min.X), (int)(max.Y - min.Y)));
 	}
 
 	private void UpdateMatrix(Matrix transform, Rectangle visibleArea)
@@ -164,6 +139,34 @@ public class Camera
 			SetCameraPosition(newPosition);
 		}
 		*/
+	}
+
+	private Matrix CalculateTransformMatrix(Vector2 position, Rectangle bounds, float zoom)
+	{
+		Matrix transform = Matrix.CreateTranslation(new Vector3(-position.X, -position.Y, 0)) *
+					Matrix.CreateScale(zoom) *
+					Matrix.CreateTranslation(new Vector3(bounds.Width * 0.5f, bounds.Height * 0.5f, 0));
+
+		return transform;
+	}
+
+	private Rectangle CalculateVisibleArea(Matrix transform, Rectangle bounds)
+	{
+		Matrix inverseViewMatrix = Matrix.Invert(Transform);
+
+		Vector2 tl = Vector2.Transform(Vector2.Zero, inverseViewMatrix);
+		Vector2 tr = Vector2.Transform(new Vector2(Bounds.X, 0), inverseViewMatrix);
+		Vector2 bl = Vector2.Transform(new Vector2(0, Bounds.Y), inverseViewMatrix);
+		Vector2 br = Vector2.Transform(new Vector2(Bounds.Width, Bounds.Height), inverseViewMatrix);
+
+		Vector2 min = new Vector2(
+			MathHelper.Min(tl.X, MathHelper.Min(tr.X, MathHelper.Min(bl.X, br.X))),
+			MathHelper.Min(tl.Y, MathHelper.Min(tr.Y, MathHelper.Min(bl.Y, br.Y))));
+		Vector2 max = new Vector2(
+			MathHelper.Max(tl.X, MathHelper.Max(tr.X, MathHelper.Max(bl.X, br.X))),
+			MathHelper.Max(tl.Y, MathHelper.Max(tr.Y, MathHelper.Max(bl.Y, br.Y))));
+
+		return (new Rectangle((int)min.X, (int)min.Y, (int)(max.X - min.X), (int)(max.Y - min.Y)));
 	}
 
 	public Vector2 getMouseScreenPosition()
