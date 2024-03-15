@@ -54,8 +54,6 @@ public class HelloScene : Scene
 		{
 			SceneManager.Stop(this);
 			SceneManager.StartOverlay(new WorldScene());
-			_previousMouseState = currentMouseState;
-
 			return;
 		}
 
