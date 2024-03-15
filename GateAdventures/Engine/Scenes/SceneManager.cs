@@ -12,7 +12,7 @@ public sealed class SceneManager
 	private readonly GameServiceContainer _services;
 
 	/// <summary>
-	/// Get a list of active scenes.
+	/// Get a array of active scenes.
 	/// </summary>
 	public IScene[] Scenes { get => _scenes.ToArray(); }
 
