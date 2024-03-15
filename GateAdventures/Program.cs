@@ -1,3 +1,3 @@
 ﻿
-using var game = new GateAdventures.Game1();
+using var game = new GateAdventures.GateAdventures();
 game.Run();
