@@ -98,6 +98,15 @@ public class Camera
 			cameraMovement.X = moveSpeed;
 		}
 
+		// TODO: Store these somewhere not here
+		int tileWidth = 32;
+		int tileHeight = 32;
+		int mapWidth = 30;
+		int mapHeight = 30;
+
+		float mapWidthInPixels = tileWidth * mapWidth;
+		float mapHeightInPixels = tileHeight * mapHeight;
+
 		// Handle zoom
 		_previousMouseWheelValue = _currentMouseWheelValue;
 		_currentMouseWheelValue = mouseState.ScrollWheelValue;
@@ -112,39 +121,49 @@ public class Camera
 			AdjustZoom(-.05f);
 		}
 
-		// TODO: Store these somewhere not here
-		int tileWidth = 32;
-		int tileHeight = 32;
-		int mapWidth = 30;
-		int mapHeight = 30;
+		// Ensure zoom level doesn't allow the visible area to exceed map size
+		float maxZoomOutX = Bounds.Width / mapWidthInPixels;
+		float maxZoomOutY = Bounds.Height / mapHeightInPixels;
+		float maxZoomOut = Math.Max(maxZoomOutX, maxZoomOutY);
+
+		if (Zoom < maxZoomOut)
+		{
+			Zoom = maxZoomOut;
+		}
 
 		Vector2 newPosition = Position + cameraMovement;
 		Matrix newTransform = CalculateTransformMatrix(newPosition, Bounds, Zoom);
 		Rectangle newVisibleArea = CalculateVisibleArea(newTransform, Bounds);
 
-		// Trying to figure out how to make it so the view area stays in the map
-		Debug.WriteLine("Visible Area: " + newVisibleArea.ToString(), "New Position: " + newPosition.ToString());
-		Debug.WriteLine("Old Position: " + Position.ToString());
+		// Adjust position if the visible area goes out of bounds
+		if (newVisibleArea.Left < 0)
+		{
+			newPosition.X += -newVisibleArea.Left;
+		}
+		if (newVisibleArea.Top < 0)
+		{
+			newPosition.Y += -newVisibleArea.Top;
+		}
+		if (newVisibleArea.Right > mapWidthInPixels)
+		{
+			newPosition.X -= newVisibleArea.Right - mapWidthInPixels;
+		}
+		if (newVisibleArea.Bottom > mapHeightInPixels)
+		{
+			newPosition.Y -= newVisibleArea.Bottom - mapHeightInPixels;
+		}
 
-		// If out of bounds
-		if (newVisibleArea.Left < 0
-			|| newVisibleArea.Top < 0
-			|| newVisibleArea.Right > tileWidth * mapWidth
-			|| newVisibleArea.Bottom > tileHeight * mapHeight)
-		{
-			Debug.WriteLine("Out of bounds");
-			Zoom = _oldZoom;
-			Position = _oldPosition;
-			Transform = _oldTransform;
-			VisibleArea = CalculateVisibleArea(Transform, Bounds);
-		}
-		else
-		{
-			Debug.WriteLine("In bounds");
-			Position = newPosition;
-			Transform = newTransform;
-			VisibleArea = newVisibleArea;
-		}
+		// Clamp position to ensure the camera stays within bounds
+		float halfWidth = newVisibleArea.Width / 2f;
+		float halfHeight = newVisibleArea.Height / 2f;
+
+		newPosition.X = MathHelper.Clamp(newPosition.X, halfWidth, mapWidthInPixels - halfWidth);
+		newPosition.Y = MathHelper.Clamp(newPosition.Y, halfHeight, mapHeightInPixels - halfHeight);
+
+		// Update camera if within bounds
+		Transform = CalculateTransformMatrix(newPosition, Bounds, Zoom);
+		VisibleArea = CalculateVisibleArea(Transform, Bounds);
+		Position = newPosition;
 	}
 
 	private Matrix CalculateTransformMatrix(Vector2 position, Rectangle bounds, float zoom)
