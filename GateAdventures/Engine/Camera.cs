@@ -10,18 +10,45 @@ using Microsoft.Xna.Framework.Input;
 
 namespace GateAdventures.Engine;
 
+/// <summary>
+/// Represents a camera that handles movement, zoom, and view transformations in a 2D game.
+/// </summary>
 public class Camera
 {
+	/// <summary>
+	/// Gets or sets the zoom level of the camera. 
+	/// A value greater than 1 zooms in, while a value less than 1 zooms out.
+	/// </summary>
 	public float Zoom { get; set; }
+
+	/// <summary>
+	/// Gets or sets the current position of the camera in world coordinates.
+	/// </summary>
 	public Vector2 Position { get; set; }
+
+	/// <summary>
+	/// Gets the bounds of the camera's viewport.
+	/// </summary>
 	public Rectangle Bounds { get; protected set; }
+
+	/// <summary>
+	/// Gets the transformation matrix used to render the camera's view.
+	/// </summary>
 	public Matrix Transform { get; protected set; }
+
+	/// <summary>
+	/// Gets the visible area of the game world based on the current camera position and zoom level.
+	/// </summary>
 	public Rectangle VisibleArea { get; protected set; }
 
 	private float _currentMouseWheelValue, _previousMouseWheelValue, _oldZoom;
 	private Vector2 _oldPosition;
 	private Matrix _oldTransform;
 
+	/// <summary>
+	/// Initializes a new instance of the <see cref="Camera"/> class.
+	/// </summary>
+	/// <param name="services">The service container to retrieve graphics-related services.</param>
 	public Camera(GameServiceContainer services)
 	{
 		GraphicsDeviceManager graphics = services.GetService<GraphicsDeviceManager>();
@@ -35,23 +62,29 @@ public class Camera
 		VisibleArea = CalculateVisibleArea(Transform, Bounds);
 	}
 
-	private void UpdateMatrix(Matrix transform, Rectangle visibleArea)
-	{
-		Transform = transform;
-		VisibleArea = visibleArea;
-	}
-
+	/// <summary>
+	/// Moves the camera by the specified amount.
+	/// </summary>
+	/// <param name="movePosition">The amount to move the camera in world coordinates.</param>
 	public void MoveCamera(Vector2 movePosition)
 	{
 		Vector2 newPosition = Position + movePosition;
 		Position = newPosition;
 	}
 
+	/// <summary>
+	/// Sets the camera position to the specified coordinates.
+	/// </summary>
+	/// <param name="cameraPosition">The new position of the camera in world coordinates.</param>
 	public void SetCameraPosition(Vector2 cameraPosition)
 	{
 		Position = cameraPosition;
 	}
 
+	/// <summary>
+	/// Adjusts the camera zoom by the specified amount.
+	/// </summary>
+	/// <param name="zoomAmount">The amount to change the zoom level.</param>
 	public void AdjustZoom(float zoomAmount)
 	{
 		Zoom += zoomAmount;
@@ -65,6 +98,10 @@ public class Camera
 		}
 	}
 
+	/// <summary>
+	/// Updates the camera's position and zoom based on input and ensures it stays within the map boundaries.
+	/// </summary>
+	/// <param name="graphics">The graphics device manager for screen dimensions.</param>
 	public void UpdateCamera(GraphicsDeviceManager graphics)
 	{
 		_oldPosition = Position;
@@ -166,6 +203,13 @@ public class Camera
 		Position = newPosition;
 	}
 
+	/// <summary>
+	/// Calculates the transformation matrix for the camera.
+	/// </summary>
+	/// <param name="position">The camera position.</param>
+	/// <param name="bounds">The viewport bounds.</param>
+	/// <param name="zoom">The current zoom level.</param>
+	/// <returns>The calculated transformation matrix.</returns>
 	private Matrix CalculateTransformMatrix(Vector2 position, Rectangle bounds, float zoom)
 	{
 		Matrix transform = Matrix.CreateTranslation(new Vector3(-position.X, -position.Y, 0)) *
@@ -175,6 +219,12 @@ public class Camera
 		return transform;
 	}
 
+	/// <summary>
+	/// Calculates the visible area of the game world based on the current transformation matrix.
+	/// </summary>
+	/// <param name="transform">The transformation matrix.</param>
+	/// <param name="bounds">The viewport bounds.</param>
+	/// <returns>The calculated visible area in world coordinates.</returns>
 	private Rectangle CalculateVisibleArea(Matrix transform, Rectangle bounds)
 	{
 		Matrix inverseViewMatrix = Matrix.Invert(transform);
@@ -195,6 +245,10 @@ public class Camera
 		return (new Rectangle((int)min.X, (int)min.Y, (int)(max.X - min.X), (int)(max.Y - min.Y)));
 	}
 
+	/// <summary>
+	/// Gets the mouse position relative to the screen.
+	/// </summary>
+	/// <returns>The mouse position in screen coordinates.</returns>
 	public Vector2 getMouseScreenPosition()
 	{
 		MouseState mouseState = Mouse.GetState();
@@ -203,6 +257,10 @@ public class Camera
 		return new Vector2(mouse.X, mouse.Y);
 	}
 
+	/// <summary>
+	/// Gets the mouse position relative to the game world.
+	/// </summary>
+	/// <returns>The mouse position in world coordinates.</returns>
 	public Vector2 getMouseScenePosition()
 	{
 		MouseState mouseState = Mouse.GetState();
@@ -211,5 +269,4 @@ public class Camera
 		mouse = Vector2.Transform(mouse, Matrix.Invert(Transform));
 		return mouse;
 	}
-
 }
