@@ -21,6 +21,11 @@
 
 -->
 
+### [0.0.0-2024-12-12](https://github.com/maxdevos49/gate-adventures/pull/6)
+
+#### Changes
+- Added camera functionality to move around the map
+
 ### [0.0.0-2024-03-15](https://github.com/maxdevos49/gate-adventures/pull/5)
 
 #### Other/Technical

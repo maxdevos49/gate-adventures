@@ -15,6 +15,7 @@ public abstract class Scene : IScene
 	protected SpriteBatch _spriteBatch { get; private set; }
 	protected SceneManager _sceneManager { get; private set; }
 	protected ContentManager _content { get; private set; }
+	protected Camera _camera { get; private set; }
 
 	public virtual void Initialize(GameServiceContainer services)
 	{
@@ -22,6 +23,7 @@ public abstract class Scene : IScene
 		_spriteBatch = services.GetService<SpriteBatch>() ?? throw new NullReferenceException("\"SpriteBatch\" service is null");
 		_graphicsDeviceManager = services.GetService<GraphicsDeviceManager>() ?? throw new NullReferenceException("\"GraphicsDeviceManager\" service is null");
 		_graphicsDevice = services.GetService<GraphicsDevice>() ?? throw new NullReferenceException("\"GraphicsDevice\" service is null");
+		_camera = services.GetService<Camera>() ?? throw new NullReferenceException("\"Camera\" service is null");
 
 		ContentManager globalContentManager = services.GetService<ContentManager>() ?? throw new NullReferenceException("\nContentManager\n service is null");
 		_content = new ContentManager(services, globalContentManager.RootDirectory);
